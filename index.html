@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="RZK Wifi.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="rzk_wifi">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <title>RZK Wifi</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // Fetch version from a JSON file
+    fetch('version.json')
+      .then(response => response.json())
+      .then(versionData => {
+        // Add the version as a query parameter
+        const version = versionData.version || '1.0.1';
+        const script = document.createElement('script');
+        script.src = `main.dart.js?v=1.0.1`;
+        script.type = 'application/javascript';
+        document.body.appendChild(script);
+
+        // Initialize Flutter app
+        window.addEventListener('load', function (ev) {
+          _flutter.loader.loadEntrypoint({
+            serviceWorker: {
+              serviceWorkerVersion: version, // Use version from JSON
+            },
+            onEntrypointLoaded: function (engineInitializer) {
+              engineInitializer.initializeEngine().then(function (appRunner) {
+                appRunner.runApp();
+              });
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Failed to load version information:', error);
+      });
+  </script>
+  </body>
+
+</html>
