@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="dns-prefetch" href="https://imasdk.googleapis.com">
+    <link rel="dns-prefetch" href="https://tv.springserve.com">
+    <link rel="dns-prefetch" href="https://s0.2mdn.net">
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="https://gcdn.2mdn.net">
+    <link rel="dns-prefetch" href="https://assets.springserve.com">
+    <link rel="preconnect" href="https://imasdk.googleapis.com">
+    <link rel="preconnect" href="https://tv.springserve.com">
+    <link rel="preconnect" href="https://s0.2mdn.net">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="preconnect" href="https://gcdn.2mdn.net">
+    <link rel="preconnect" href="https://assets.springserve.com">
+    <link rel="preconnect" href="https://vid-io-dub.springserve.com">
+    <link rel="preload" href="https://imasdk.googleapis.com/js/sdkloader/ima3.js" as="script">
+    <link rel="preload" href="https://s0.2mdn.net/instream/video/client.js" as="script">
+    <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
+    <title>RZK Magnite Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>        
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #content,
+        #adContainer {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background: black;
+            overflow: hidden;
+        }
+        video {
+            width: 100% !important;
+            height: auto !important;
+        }
+        #contentElement {
+            width: 100%;
+            height: 100%;
+        }
+    </style>    
+</head>
+<body>
+    <script>
+        function getBroadsignData(propertyName) {
+            try {
+                return BroadSignObject[propertyName];
+            } catch {
+                return "";
+            }
+        }
+
+        const videoWidth =  window.innerHeight/2;
+        const videoHeight = window.innerHeight;
+        const maxDuration = 11;
+        const account = 25588;
+        const site = 482624;
+        const zone = 2862124;
+        const deal = "INV-25588-00045";
+        const domain = "rzkdigital.com.br";
+        const multiplier = 171;
+        const UA = "rzk/1.0";
+        const springServeId = 690036;
+        const allowedIDs = ["1354473-1-n","1116351-1-n"];
+        const tagMagnite = "https://tv.springserve.com/vast/" + springServeId + "?w=" + 256 + "&h=" + 512 + "&cb="+ Date.now() +"&dur=" + maxDuration + "&pod_ad_slots=1&did={{DEVICE_ID}}&language=pt&account=" + account + "&site=" + site + "&zone=" + zone + "&deal=" + deal + "&multiplier=" + multiplier + "&lat={{LAT}}&lon={{LON}}&ua=" + UA + "&url=" + domain + "&displayid=" + getBroadsignData("display_unit_id");
+    </script>
+    <div id="content">
+        <video id="contentElement" playsinline muted>
+        </video>
+    </div>
+    <div id="adContainer"></div>
+    <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+    <script>
+        var adsManager,
+            adsLoader,
+            adsRequest,
+            adDisplayContainer,
+            intervalTimer,
+            playButton,
+            videoContent,
+            adContainerWidth;
+
+        function init() {
+            videoContent = document.getElementById("contentElement");
+            videoContent.setAttribute("style", "width:" + videoWidth + "px; height:" + videoHeight + "px");    
+            setUpIMA();
+            callAd();
+        }
+
+        function setUpIMA() {
+            createAdDisplayContainer();
+            adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+            adsLoader.addEventListener(
+                google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
+                onAdsManagerLoaded,
+                false
+            );
+            adsLoader.addEventListener(
+                google.ima.AdErrorEvent.Type.AD_ERROR,
+                onAdError,
+                false
+            );
+            var contentEndedListener = function () {
+                adsLoader.contentComplete();
+            };
+            videoContent.onended = contentEndedListener;
+        }
+
+        function callAd() {
+            adsRequest = new google.ima.AdsRequest();
+            adsRequest.adTagUrl = tagMagnite;
+            adsRequest.linearAdSlotWidth = videoWidth;
+            adsRequest.linearAdSlotHeight = videoHeight;
+            adsRequest.setAdWillAutoPlay(true);
+            adsLoader.requestAds(adsRequest);
+        }
+
+        function createAdDisplayContainer() {
+            adDisplayContainer = new google.ima.AdDisplayContainer(
+                document.getElementById("adContainer"),
+                videoContent
+            );
+        }
+
+        function playAds() {
+            videoContent.load();
+            adDisplayContainer.initialize();
+            try {
+                adContainerWidth = videoWidth;
+                adContainerHeight = videoHeight;
+                adsManager.init(
+                    adContainerWidth,
+                    adContainerHeight,
+                    google.ima.ViewMode.FULLSCREEN
+                );
+                adsManager.start();
+            } catch (adError) {
+                console.log("\n ERROR: VAST ERROR");
+            }
+        }
+
+        function onAdsManagerLoaded(adsManagerLoadedEvent) {
+            var adsRenderingSettings = new google.ima.AdsRenderingSettings();
+            adsRenderingSettings.restoreCustomPlaybackStateOnAdBreakComplete = true;
+            adsRenderingSettings.enablePreloading = true;
+
+            adsManager = adsManagerLoadedEvent.getAdsManager(
+                videoContent,
+                adsRenderingSettings
+            );
+            adsManager.addEventListener(
+                google.ima.AdErrorEvent.Type.AD_ERROR,
+                onAdError
+            );
+            adsManager.addEventListener(
+                google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED,
+                onContentPauseRequested
+            );
+            adsManager.addEventListener(
+                google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED,
+                onContentResumeRequested
+            );
+            adsManager.addEventListener(google.ima.AdEvent.Type.LOADED, onAdLoaded);
+            adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, onAdEvent);
+            adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdEvent);
+            playAds();
+        }
+
+        function isAdApproved(adId, creativeId, universalAdIdValue) {
+            console.log("adId => ",adId);
+            console.log("creativeId => ",creativeId);
+            console.log("universalAdIdValue => ",universalAdIdValue);
+            if (allowedIDs.includes(adId) || allowedIDs.includes(creativeId)
+                || allowedIDs.includes(universalAdIdValue)
+            ) {
+                playApproved = true;
+                return true;
+            }
+            return false;
+        }
+
+        function onAdLoaded(adEvent) {
+            var ad = adEvent.getAdData();
+            if (isAdApproved(ad.adId, ad.creativeId, ad.universalAdIdValue)) {
+                if (!adEvent.getAd().isLinear()) {
+                    adsManager.setVolume(0);
+                    videoContent.play();
+                }
+            } else {
+                console.log("  OPS --> AD ID NOT WHITELISTED => ", ad.adId);
+                adsManager.destroy();
+            }
+        }
+
+        function onAdEvent(adEvent) {
+            var ad = adEvent.getAd();
+        }
+
+        function onAdError(adErrorEvent) {
+            console.log("\n \nERROR ==> Video can't be displayed");
+            console.log(adErrorEvent);
+        }
+
+        function onContentPauseRequested() {
+            videoContent.pause();
+        }
+
+        function onContentResumeRequested() {
+            adsManager.setVolume(0);
+            videoContent.play();
+        }
+
+        function BroadSignPlay() {
+            init();
+        }
+
+        if (typeof BroadSignObject === 'undefined') {
+            init();
+        }
+
+        function waitUntilInstalled(registration) {
+            return new Promise(function(resolve, reject) {
+                if (registration.installing) 
+                {
+                    registration.installing.addEventListener('statechange', function(e) {
+                    if (e.target.state === 'installed') {
+                        console.log("sw installed");
+                        resolve();
+                    } else if (e.target.state === 'redundant') {
+                        console.log("sw redundant");
+                        reject();
+                    }
+                    });
+                }                                
+                else {
+                    resolve();
+                }
+
+                if (registration.waiting) {
+                    console.log("Service worker installed");
+                } else if (registration.active) {
+                    console.log("Service worker active");
+                } 
+
+            });
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(waitUntilInstalled).catch(function(error) {
+                console.error(error);
+            });
+        } else {
+            console.error('Browser doesn\'t support service workers');
+        }
+    </script>
+</body>
+</html>
